@@ -16,10 +16,8 @@ Route::get('category', ['middleware' => 'auth', function(){ return view('index')
 Route::get('login', 'Auth\AuthController@getLogin');
 Route::post('login', 'Auth\AuthController@postLogin');
 Route::get('logout', 'Auth\AuthController@getLogout');
-Route::get('register', 'Auth\AuthController@getRegister');
-Route::post('register', 'Auth\AuthController@postRegister');
-//Route::get('login', ['as' => 'login.index', 'uses' => 'UserController@index']);
-//Route::post('login', ['as' => 'login.store', 'uses' => 'UserController@store']);
+//Route::get('register', 'Auth\AuthController@getRegister');
+//Route::post('register', 'Auth\AuthController@postRegister');
 
 Route::group(['prefix' => 'api'], function(){
 
