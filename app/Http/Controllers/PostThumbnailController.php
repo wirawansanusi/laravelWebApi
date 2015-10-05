@@ -18,6 +18,7 @@ use App\PostThumbnail;
 
 // Using Utility Class
 use Image;
+use Intervention\Image\Size;
 
 class PostThumbnailController extends Controller
 {
@@ -37,7 +38,10 @@ class PostThumbnailController extends Controller
      */
     public function index($categoryId, $postId)
     {
-        $filesystem = $this->initFilesystem();
+        $prefix2 = 'product_images_small';
+        $client2 = new Client('3DmH_8oLTKAAAAAAAAAAB6OxHkkn9-0UUPBa0A-_TNV7y3n5raKdaezv5262EAc7', 'by7j8gc0f3htexs');
+        $adapter2 = new DropboxAdapter($client2, $prefix2);
+        $filesystem = new Filesystem($adapter2);
 
         // fetching a record based on post_id
         $post_thumbnails = PostThumbnail::where('post_id', $postId)->get();
@@ -65,7 +69,10 @@ class PostThumbnailController extends Controller
      */
     public function show($categoryId, $postId, $thumbnailId)
     {
-        $filesystem = $this->initFilesystem();
+        $prefix2 = 'product_images_small';
+        $client2 = new Client('3DmH_8oLTKAAAAAAAAAAB6OxHkkn9-0UUPBa0A-_TNV7y3n5raKdaezv5262EAc7', 'by7j8gc0f3htexs');
+        $adapter2 = new DropboxAdapter($client2, $prefix2);
+        $filesystem = new Filesystem($adapter2);
 
         // fetching a record based on post_id
         $post_thumbnail = PostThumbnail::findOrFail($thumbnailId);
@@ -91,6 +98,11 @@ class PostThumbnailController extends Controller
     {
         $filesystem = $this->initFilesystem();
 
+        $prefix2 = 'product_images_small';
+        $client2 = new Client('3DmH_8oLTKAAAAAAAAAAB6OxHkkn9-0UUPBa0A-_TNV7y3n5raKdaezv5262EAc7', 'by7j8gc0f3htexs');
+        $adapter2 = new DropboxAdapter($client2, $prefix2);
+        $filesystem2 = new Filesystem($adapter2);
+
         if(Request::hasFile('file')) {
 
             $files = Request::file('file');
@@ -101,9 +113,16 @@ class PostThumbnailController extends Controller
                 $filename = time() . '-' .md5($fullname). '.' . $ext;
                 $filesystem->put($filename, file_get_contents($file));
 
+                $file_small =Image::make($file)->resize('150', null, function ($constraint) {
+                            $constraint->aspectRatio();
+                        });
+                $file_small->encode('jpeg');
+                $filesystem2->put($filename, (string) $file_small);
+
                 // create a new record
                 $post_thumbnail = new PostThumbnail;
                 $post_thumbnail->path = $filename;
+                $post_thumbnail->path_small = $filename;
                 $post_thumbnail->mime = $file->getClientMimeType();
                 $post_thumbnail->post_id = $postId;
                 $post_thumbnail->save();
@@ -153,5 +172,35 @@ class PostThumbnailController extends Controller
 
         $post->delete();
         return "success";
+    }
+
+    public function resizeThumbnail() 
+    {
+        $prefix = 'product_images';
+        $client = new Client('3DmH_8oLTKAAAAAAAAAAB6OxHkkn9-0UUPBa0A-_TNV7y3n5raKdaezv5262EAc7', 'by7j8gc0f3htexs');
+        $adapter = new DropboxAdapter($client, $prefix);
+        $filesystem = new Filesystem($adapter);
+
+        $prefix2 = 'product_images_small';
+        //$client2 = new Client('3DmH_8oLTKAAAAAAAAAAB6OxHkkn9-0UUPBa0A-_TNV7y3n5raKdaezv5262EAc7', 'by7j8gc0f3htexs');
+        $adapter2 = new DropboxAdapter($client, $prefix2);
+        $filesystem2 = new Filesystem($adapter2);
+
+        $post_thumbnails = PostThumbnail::where('id', '>', 200)->get()->take(17);
+        foreach ($post_thumbnails as $post_thumbnail) {
+            
+            $file = $filesystem->read($post_thumbnail->path);
+            $data = Image::make($file)->resize('150', null, function ($constraint) {
+                            $constraint->aspectRatio();
+                        });
+            $data->encode('jpeg');
+
+            $filename = $post_thumbnail->path;
+            $filesystem2->put($filename, (string) $data);
+
+            // update record
+            $post_thumbnail->path_small = $filename;
+            $post_thumbnail->save();
+        }
     }
 }

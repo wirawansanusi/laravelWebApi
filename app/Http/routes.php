@@ -30,3 +30,5 @@ Route::group(['prefix' => 'api'], function(){
 	]);
 });
 
+route::get('convert', ['as' => 'resizeThumbnail', 'uses' => 'PostThumbnailController@resizeThumbnail']);
+
