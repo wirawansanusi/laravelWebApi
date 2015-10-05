@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 
 // Using Entity Model
 use App\Post;
+use App\PostThumbnail;
 
 class PostController extends Controller
 {
@@ -65,8 +66,16 @@ class PostController extends Controller
     public function show($categoryId, $postId)
     {
         $post = Post::findOrFail($postId);
+        $post_thumbnails = PostThumbnail::where('post_id', $postId)->get();
 
-        return $post;
+        $post_DTO = array();
+        $post_DTO["id"] = $post->id;
+        $post_DTO["title"] = $post->title;
+        $post_DTO["body"] = $post->body;
+        $post_DTO["category_id"] = $post->category_id;
+        $post_DTO["total_images"] = count($post_thumbnails);
+
+        return $post_DTO;
     }
 
     /**
