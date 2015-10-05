@@ -23,7 +23,7 @@ Route::group(['prefix' => 'api'], function(){
 
 	Route::resource('category', 'CategoryController', ['except' => ['create', 'edit']]);
 	Route::resource('category.post', 'PostController', ['except' => ['create', 'edit']]);
-	Route::resource('category.post.thumbnail', 'PostThumbnailController', ['except' => ['create', 'show', 'edit', 'update']]);
+	Route::resource('category.post.thumbnail', 'PostThumbnailController', ['except' => ['create', 'edit', 'update']]);
 	Route::delete('category/{category}/post/{post}/thumbnail', [
 		'as' => 'api.category.post.thumbnail.destroyPost', 
 		'uses' => 'PostThumbnailController@destroyPost'

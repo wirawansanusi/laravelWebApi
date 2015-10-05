@@ -73,7 +73,14 @@ class PostController extends Controller
         $post_DTO["title"] = $post->title;
         $post_DTO["body"] = $post->body;
         $post_DTO["category_id"] = $post->category_id;
-        $post_DTO["total_images"] = count($post_thumbnails);
+
+        $post_DTO["thumbnails"] = array();
+        if ($post_thumbnails) {
+            foreach ($post_thumbnails as $post_thumbnail) {
+                $id = $post_thumbnail->id;
+                $post_DTO["thumbnails"][] = (int) $id;
+            }
+        }
 
         return $post_DTO;
     }
