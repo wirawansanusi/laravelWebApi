@@ -20,19 +20,30 @@ class PostController extends Controller
     public function index($categoryId)
     {
         $posts = Post::where('category_id', $categoryId)->get();
-        $trimmedPosts = array();
+        $posts_DTO = array();
 
         if($posts){
 
             foreach ($posts as $post) {
-                $trimmedPost['id'] = $post->id;
-                $trimmedPost['title'] = $post->title;
-                $trimmedPost['category_id'] = $categoryId;
-                $trimmedPosts[] = $trimmedPost;
+                $post_thumbnails = PostThumbnail::where('post_id', $post->id)->get();
+                
+                $post_DTO['id'] = $post->id;
+                $post_DTO["title"] = $post->title;
+                $post_DTO["body"] = $post->body;
+                $post_DTO["category_id"] = $post->category_id;
+
+                $post_DTO["thumbnails"] = array();
+                if ($post_thumbnails) {
+                    foreach ($post_thumbnails as $post_thumbnail) {
+                        $id = $post_thumbnail->id;
+                        $post_DTO["thumbnails"][] = (int) $id;
+                    }
+                }
+                $posts_DTO[] = $post_DTO;
             }
         }
 
-        return $trimmedPosts;
+        return $posts_DTO;
     }
 
     /**
