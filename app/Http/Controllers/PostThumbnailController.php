@@ -89,6 +89,30 @@ class PostThumbnailController extends Controller
     }
 
     /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function showLarge($categoryId, $postId, $thumbnailId)
+    {
+        $filesystem = $this->initFilesystem();
+
+        // fetching a record based on post_id
+        $post_thumbnail = PostThumbnail::findOrFail($thumbnailId);
+
+        $file = $filesystem->read($post_thumbnail->path);
+        $data = Image::make($file);
+        $id = $post_thumbnail->id;
+
+        $image = array();
+        $image['data'] = $data->encode('data-url');
+        $image['id'] = $id;
+
+        return $image;
+    }
+
+    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
