@@ -26,7 +26,8 @@ class AddSmallPath extends Migration
     public function down()
     {
         Schema::table('post_thumbnails', function (Blueprint $table) {
-            //
+            
+            $table->dropColumn('path_small');
         });
     }
 }

@@ -30,6 +30,14 @@ class PostThumbnailController extends Controller
         $filesystem = new Filesystem($adapter);
         return $filesystem;
     }
+    protected function initFilesystemForSmallThumbnail()
+    {
+        $prefix = 'product_images_small';
+        $client = new Client('3DmH_8oLTKAAAAAAAAAAB6OxHkkn9-0UUPBa0A-_TNV7y3n5raKdaezv5262EAc7', 'by7j8gc0f3htexs');
+        $adapter = new DropboxAdapter($client, $prefix);
+        $filesystem = new Filesystem($adapter);
+        return $filesystem;
+    }
 
     /**
      * Display a listing of the resource.
@@ -38,10 +46,7 @@ class PostThumbnailController extends Controller
      */
     public function index($categoryId, $postId)
     {
-        $prefix2 = 'product_images_small';
-        $client2 = new Client('3DmH_8oLTKAAAAAAAAAAB6OxHkkn9-0UUPBa0A-_TNV7y3n5raKdaezv5262EAc7', 'by7j8gc0f3htexs');
-        $adapter2 = new DropboxAdapter($client2, $prefix2);
-        $filesystem = new Filesystem($adapter2);
+        $filesystem = $this->initFilesystemForSmallThumbnail();
 
         // fetching a record based on post_id
         $post_thumbnails = PostThumbnail::where('post_id', $postId)->get();
@@ -69,10 +74,7 @@ class PostThumbnailController extends Controller
      */
     public function show($categoryId, $postId, $thumbnailId)
     {
-        $prefix2 = 'product_images_small';
-        $client2 = new Client('3DmH_8oLTKAAAAAAAAAAB6OxHkkn9-0UUPBa0A-_TNV7y3n5raKdaezv5262EAc7', 'by7j8gc0f3htexs');
-        $adapter2 = new DropboxAdapter($client2, $prefix2);
-        $filesystem = new Filesystem($adapter2);
+        $filesystem = $this->initFilesystemForSmallThumbnail();
 
         // fetching a record based on post_id
         $post_thumbnail = PostThumbnail::findOrFail($thumbnailId);
@@ -121,11 +123,7 @@ class PostThumbnailController extends Controller
     public function store(Request $request, $categoryId, $postId)
     {
         $filesystem = $this->initFilesystem();
-
-        $prefix2 = 'product_images_small';
-        $client2 = new Client('3DmH_8oLTKAAAAAAAAAAB6OxHkkn9-0UUPBa0A-_TNV7y3n5raKdaezv5262EAc7', 'by7j8gc0f3htexs');
-        $adapter2 = new DropboxAdapter($client2, $prefix2);
-        $filesystem2 = new Filesystem($adapter2);
+        $filesystem2 = $this->initFilesystemForSmallThumbnail();
 
         if(Request::hasFile('file')) {
 
@@ -200,15 +198,8 @@ class PostThumbnailController extends Controller
 
     public function resizeThumbnail() 
     {
-        $prefix = 'product_images';
-        $client = new Client('3DmH_8oLTKAAAAAAAAAAB6OxHkkn9-0UUPBa0A-_TNV7y3n5raKdaezv5262EAc7', 'by7j8gc0f3htexs');
-        $adapter = new DropboxAdapter($client, $prefix);
-        $filesystem = new Filesystem($adapter);
-
-        $prefix2 = 'product_images_small';
-        //$client2 = new Client('3DmH_8oLTKAAAAAAAAAAB6OxHkkn9-0UUPBa0A-_TNV7y3n5raKdaezv5262EAc7', 'by7j8gc0f3htexs');
-        $adapter2 = new DropboxAdapter($client, $prefix2);
-        $filesystem2 = new Filesystem($adapter2);
+        $filesystem = $this->initFilesystem();
+        $filesystem2 = $this->initFilesystemForSmallThumbnail();
 
         $post_thumbnails = PostThumbnail::where('id', '>', 200)->get()->take(17);
         foreach ($post_thumbnails as $post_thumbnail) {

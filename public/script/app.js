@@ -15,7 +15,23 @@
 	  };
 	});
 	angular.module('mlmfoto', ['dropzone', 'angular-loading-bar'])
-		.controller('CategoryListController', function($scope, $http){
+		.controller('VersionController', function($scope, $http){
+			$http.get('./api')
+				.success(function(data){
+					$scope.versionUpdate = data;
+				});
+			$scope.createVersionUpdate = function(){
+				$http.post('./api')
+					.success(function(data){
+						$http.get('./api')
+							.success(function(data){
+								$scope.versionUpdate = data;
+							});
+					}).error(function(error, status){
+						console.log(error);
+					})
+			}
+		}).controller('CategoryListController', function($scope, $http){
 			$http.get('./api/category')
 				.success(function(data){
 					$scope.categories = data;

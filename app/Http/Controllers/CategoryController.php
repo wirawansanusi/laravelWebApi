@@ -41,6 +41,7 @@ class CategoryController extends Controller
                 $_category['id'] = $category->id;
                 $_category['title'] = $category->title;
                 $_category['temp_id'] = $i++;
+                $_category['hasUpdated'] = $category->hasUpdated;
                 $_category['child'] = array();
                 $parentCategory = ParentCategory::where('child_id', $category->id)->first();
                 if(!empty($parentCategory)){
@@ -61,6 +62,7 @@ class CategoryController extends Controller
                     $_subCategory['title'] = $_childCategory->title;
                     $_subCategory['parent_title'] = $_parentCategory->title;
                     $_subCategory['parentTemp_id'] = $_category['temp_id'];
+                    $_subCategory['hasUpdated'] = $_childCategory->hasUpdated;
                     $_category['child'][] = $_subCategory;
                 }
 
@@ -135,6 +137,7 @@ class CategoryController extends Controller
         $_category = array();
         $_category['id'] = $category->id;
         $_category['title'] = $category->title;
+        $_category['hasUpdated'] = $category->hasUpdated;
         $parentCategory = ParentCategory::where('child_id', $id)->first();
         if($parentCategory){
             $parent = Category::find($parentCategory->parent_id);
@@ -152,6 +155,7 @@ class CategoryController extends Controller
             $_subCategory['parent_id'] = $subCategory->parent_id;
             $_subCategory['parent_title'] = $_parentCategory->title;
             $_subCategory['child_id'] = $subCategory->child_id;
+            $_subCategory['hasUpdated'] = $_childCategory->hasUpdated;
             $_category['child'] = $_subCategory;
         }
 
