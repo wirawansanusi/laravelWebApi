@@ -7,6 +7,7 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
 // Using Entity Model
+use App\Category;
 use App\Post;
 use App\PostThumbnail;
 
@@ -65,6 +66,14 @@ class PostController extends Controller
         $post->category_id = $categoryId;
         $post->save();
 
+        // Update the category version in order to request a new json data
+        // from the ios application
+        $category = Category::findOrFail($categoryId);
+        $category_version_string = $category->version;
+        $category_version = ((int) $category_version_string) + 1;
+        $category->version = $category_version;
+        $category->save();
+
         return $post;
     }
 
@@ -114,6 +123,14 @@ class PostController extends Controller
         $post->title = $request->title;
         $post->body = $request->body;
         $post->save();
+
+        // Update the category version in order to request a new json data
+        // from the ios application
+        $category = Category::findOrFail($categoryId);
+        $category_version_string = $category->version;
+        $category_version = ((int) $category_version_string) + 1;
+        $category->version = $category_version;
+        $category->save();
     }
 
     /**
@@ -124,6 +141,14 @@ class PostController extends Controller
      */
     public function destroy($categoryId, $postId)
     {
+        // Update the category version in order to request a new json data
+        // from the ios application
+        $category = Category::findOrFail($categoryId);
+        $category_version_string = $category->version;
+        $category_version = ((int) $category_version_string) + 1;
+        $category->version = $category_version;
+        $category->save();
+
         $post = Post::findOrFail($postId);
         $post->delete();
     }
