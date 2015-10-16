@@ -35,7 +35,11 @@ class VersionController extends Controller
         if(!empty($version)){
             $version_number = $version->number;
         }
-        return $version_number;
+
+        $version_DTO = array();
+        $version_DTO["version"] = $version_number;
+
+        return $version_DTO;
     }
 
     /**

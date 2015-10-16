@@ -13,7 +13,7 @@
 	<header class="navbar navbar-inverse navbar-fixed-top" ng-controller="VersionController as versionCtrl">
   		<div class="container-fluid">
 			<div class="navbar-header">
-		      <a class="navbar-brand" href="#">&nbsp;&nbsp; MLMFOTO Products List @{{ "ver." + versionUpdate }}</a>
+		      <a class="navbar-brand" href="#">&nbsp;&nbsp; MLMFOTO Products List @{{ "ver." + versionUpdate.version }}</a>
 		      <div class="navbar-form navbar-left" role="search">
 		        <button type="submit" class="btn btn-warning" ng-click="createVersionUpdate()">Update Version</button>
 		      </div>
