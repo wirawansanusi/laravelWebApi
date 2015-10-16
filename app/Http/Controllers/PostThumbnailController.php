@@ -13,6 +13,7 @@ use League\Flysystem\Filesystem;
 use Dropbox\Client;
 
 // Using Entity Model
+use App\Category;
 use App\Post;
 use App\PostThumbnail;
 
@@ -149,6 +150,7 @@ class PostThumbnailController extends Controller
                 $post_thumbnail->post_id = $postId;
                 $post_thumbnail->save();
             }
+
         }else{
             return response()->json(['file' => 'File not found, please try again.']);
         }
@@ -169,6 +171,13 @@ class PostThumbnailController extends Controller
         $filesystem->delete($path);
         $post_thumbnail->delete();
 
+        // Update the category version in order to request a new json data
+        // from the ios application
+        $category = Category::findOrFail($categoryId);
+        $category_version_string = $category->version;
+        $category_version = ((int) $category_version_string) + 1;
+        $category->version = $category_version;
+        $category->save();
         return "success";
     }
 
@@ -193,6 +202,14 @@ class PostThumbnailController extends Controller
         }
 
         $post->delete();
+
+        // Update the category version in order to request a new json data
+        // from the ios application
+        $category = Category::findOrFail($categoryId);
+        $category_version_string = $category->version;
+        $category_version = ((int) $category_version_string) + 1;
+        $category->version = $category_version;
+        $category->save();
         return "success";
     }
 
