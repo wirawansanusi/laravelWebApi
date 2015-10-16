@@ -31,7 +31,7 @@ class VersionController extends Controller
     public function index()
     {
         $version = Version::latest()->first();
-        $version_number = 0;
+        $version_number = 1;
         if(!empty($version)){
             $version_number = $version->number;
         }
@@ -50,10 +50,15 @@ class VersionController extends Controller
      */
     public function store(Request $request)
     {
-        $dateformat = date("YmdHis");
+        $version = Version::latest()->first();
+        $version_number = 1;
+        if(!empty($version)){
+            $version_number = $version->number;
+            $version_number++;
+        }
 
         $version = new Version;
-        $version->number = $dateformat;
+        $version->number = $version_number;
         $version->save();
 
         return "success";
